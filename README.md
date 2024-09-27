@@ -38,4 +38,3 @@ GoChat is a real-time chat application built in Go using WebSockets. It allows u
    ```bash
    go run cmd/main.go
    
-Abre tu navegador y ve a http://localhost:8080
