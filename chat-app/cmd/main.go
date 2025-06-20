@@ -70,16 +70,14 @@ func main() {
 	log.Printf("MAIN_ROUTES: WebSocket endpoint registered at /ws")
 
 	// Register an optional HTTP endpoint for fetching room statistics.
-	if chatHandler.GetRoomStatsHTTP != nil { // This check is mostly for robustness if it were truly optional.
-		mux.HandleFunc("/api/rooms/stats", chatHandler.GetRoomStatsHTTP)
-		log.Printf("MAIN_ROUTES: Room stats API endpoint registered at /api/rooms/stats")
-	}
+	mux.HandleFunc("/api/rooms/stats", chatHandler.GetRoomStatsHTTP)
+	log.Printf("MAIN_ROUTES: Room stats API endpoint registered at /api/rooms/stats")
 
 	// Setup static file serving for the frontend assets.
 	// Files are served from the "./chat-app/web" directory.
 	// For example, a request to "/" will serve "./chat-app/web/index.html".
 	// Requests to "/style.css" will serve "./chat-app/web/style.css".
-	staticFileServer := http.FileServer(http.Dir("./chat-app/web"))
+	staticFileServer := http.FileServer(http.Dir("./web"))
 	mux.Handle("/", staticFileServer)
 	log.Printf("MAIN_ROUTES: Static files served from directory ./chat-app/web at root path /")
 
