@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Go Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Setup View -->
+        <div id="setup-view">
+            <h2>Join Chat</h2>
+            <form id="join-form">
+                <div>
+                    <label for="username-input">Username:</label>
+                    <input type="text" id="username-input" value="User" required>
+                </div>
+                <div>
+                    <label for="room-id-setup-input">Room ID:</label>
+                    <input type="text" id="room-id-setup-input" value="general" required>
+                </div>
+                <button type="submit">Join Chat</button>
+            </form>
+        </div>
+
+        <!-- Chat View (hidden initially) -->
+        <div id="chat-view" style="display: none;">
+            <header id="chat-header">
+                <div id="user-info">
+                    <span>User: <strong id="display-username">N/A</strong></span> |
+                    <span>Room: <strong id="display-room-id">N/A</strong></span>
+                </div>
+                <div id="connection-info">
+                    <span>Global Users: <strong id="global-user-count">0</strong></span> |
+                    <span>Users in Room: <strong id="room-user-count">0</strong></span> |
+                    <span>Status: <strong id="connection-status" class="disconnected">Disconnected</strong></span>
+                </div>
+            </header>
+
+            <main id="chat-main">
+                <aside id="sidebar">
+                    <h4>Users in Room</h4>
+                    <ul id="user-list">
+                        <!-- User list will be populated here -->
+                    </ul>
+                    <hr>
+                    <h4>Rooms (Example)</h4>
+                    <ul id="room-list-example">
+                        <li><a href="#" data-roomid="general">general</a></li>
+                        <li><a href="#" data-roomid="random">random</a></li>
+                        <li><a href="#" data-roomid="tech">tech</a></li>
+                    </ul>
+                     <input type="text" id="new-room-id-input" placeholder="New Room ID">
+                     <button id="switch-room-btn">Switch Room</button>
+                </aside>
+
+                <section id="chat-area">
+                    <div id="message-area">
+                        <!-- Messages will be appended here -->
+                    </div>
+                    <div id="typing-indicator">
+                        <!-- Typing indicator will be shown here -->
+                    </div>
+                </section>
+            </main>
+
+            <footer id="chat-footer">
+                <form id="message-form">
+                    <input type="text" id="message-input" placeholder="Type a message or /stats [roomID]" autocomplete="off">
+                    <button type="submit">Send</button>
+                </form>
+            </footer>
+        </div>
+    </div>
+
+    <script src="chat.js" defer></script>
+</body>
+</html>
