@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"chat-app/internal/cache"
+	"github.com/yebrai/go-chat/internal/cache"
 )
 
 const (
@@ -51,8 +51,8 @@ func NewHub(redisClient *cache.RedisClient) *Hub {
 	h := &Hub{
 		clients:      make(map[*Client]bool),
 		rooms:        make(map[string]map[*Client]bool),
-		register:     make(chan *Client), // Unbuffered, registration should be handled promptly.
-		unregister:   make(chan *Client), // Unbuffered.
+		register:     make(chan *Client),       // Unbuffered, registration should be handled promptly.
+		unregister:   make(chan *Client),       // Unbuffered.
 		routeMessage: make(chan *Message, 256), // Buffered to handle bursts of messages.
 		redisClient:  redisClient,
 	}
@@ -73,8 +73,8 @@ func (h *Hub) RegisterClient(client *Client) {
 		log.Printf("HUB: Client %s successfully queued for registration.", client.username)
 	case <-time.After(2 * time.Second): // Timeout to prevent blocking indefinitely if Run() isn't active.
 		log.Printf("HUB_ERROR: Registration timeout for client %s. Hub may not be running or register channel full.", client.username)
-		close(client.send) // Close client's send channel to signal error and stop its writePump.
-		_ = client.conn.Close()    // Close WebSocket connection.
+		close(client.send)      // Close client's send channel to signal error and stop its writePump.
+		_ = client.conn.Close() // Close WebSocket connection.
 	}
 }
 
@@ -159,7 +159,7 @@ func (h *Hub) handleIncomingMessage(msg *Message) {
 	msg.Timestamp = time.Now().UTC()
 
 	client := h.findClientByUsername(msg.Username) // Find the client instance.
-	if client == nil && msg.Type != "" { // Allow empty type for potential internal messages? No, client messages must have type.
+	if client == nil && msg.Type != "" {           // Allow empty type for potential internal messages? No, client messages must have type.
 		log.Printf("HUB_WARN: Message received from unknown or unregistered user '%s'. Type: '%s'. Discarding.", msg.Username, msg.Type)
 		return
 	}
@@ -237,7 +237,9 @@ func (h *Hub) handleIncomingMessage(msg *Message) {
 		}
 
 	case RequestStatsType:
-		if client == nil { return } // Should not happen if check at start of function is good.
+		if client == nil {
+			return
+		} // Should not happen if check at start of function is good.
 		targetRoomID := msg.RoomID
 		if targetRoomID == "" { // If client requests stats for their current room without specifying
 			targetRoomID = client.currentRoomID
@@ -270,12 +272,12 @@ func (h *Hub) handleIncomingMessage(msg *Message) {
 	default:
 		log.Printf("HUB_WARN: Unknown message type '%s' received from user '%s'. Discarding.", msg.Type, msg.Username)
 		if client != nil {
-			 errorMsg := &Message{
-				Type: ErrorMessageType,
-				Content: fmt.Sprintf("Unknown message type received: %s", msg.Type),
+			errorMsg := &Message{
+				Type:      ErrorMessageType,
+				Content:   fmt.Sprintf("Unknown message type received: %s", msg.Type),
 				Timestamp: time.Now().UTC(),
-			 }
-			 client.send <- errorMsg
+			}
+			client.send <- errorMsg
 		}
 	}
 }
@@ -423,7 +425,9 @@ func (h *Hub) broadcastToRoom(message *Message) {
 
 // broadcastSystemMessageToRoom is a helper to construct and broadcast system messages.
 func (h *Hub) broadcastSystemMessageToRoom(roomID, content, relevantUsername string, msgType MessageType) {
-	if roomID == "" { return } // Basic validation
+	if roomID == "" {
+		return
+	} // Basic validation
 	log.Printf("HUB: Broadcasting system message to room '%s': Type '%s', Content '%s', User '%s'", roomID, msgType, content, relevantUsername)
 	sysMsg := &Message{
 		Type:      msgType,
@@ -439,7 +443,9 @@ func (h *Hub) broadcastSystemMessageToRoom(roomID, content, relevantUsername str
 // broadcastUserList fetches the current user list for a room from Redis
 // and broadcasts it to all clients in that room.
 func (h *Hub) broadcastUserList(roomID string) {
-	if roomID == "" { return }
+	if roomID == "" {
+		return
+	}
 	users, err := h.redisClient.GetActiveUsersInRoom(context.Background(), roomID)
 	if err != nil {
 		log.Printf("HUB_ERROR: Getting active users for room '%s' to broadcast list: %v", roomID, err)
@@ -459,7 +465,9 @@ func (h *Hub) broadcastUserList(roomID string) {
 // broadcastRoomStats fetches current statistics for a room from Redis
 // and broadcasts them to all clients in that room.
 func (h *Hub) broadcastRoomStats(roomID string) {
-	if roomID == "" { return }
+	if roomID == "" {
+		return
+	}
 	stats, err := h.redisClient.GetRoomStats(context.Background(), roomID)
 	if err != nil {
 		log.Printf("HUB_ERROR: Getting room stats for '%s' to broadcast: %v", roomID, err)

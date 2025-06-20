@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"chat-app/internal/cache"
-	"chat-app/internal/handlers"
-	"chat-app/internal/websocket"
+	"github.com/yebrai/go-chat/internal/cache"
+	"github.com/yebrai/go-chat/internal/handlers"
+	"github.com/yebrai/go-chat/internal/websocket"
 )
 
 func main() {
@@ -92,8 +92,8 @@ func main() {
 		Addr:    serverAddr,
 		Handler: mux, // Use the configured ServeMux.
 		// Set timeouts to avoid resource exhaustion from slow or malicious clients.
-		ReadTimeout:  10 * time.Second, // Max time for reading the entire request, including body.
-		WriteTimeout: 10 * time.Second, // Max time for writing the response.
+		ReadTimeout:  10 * time.Second,  // Max time for reading the entire request, including body.
+		WriteTimeout: 10 * time.Second,  // Max time for writing the response.
 		IdleTimeout:  120 * time.Second, // Max time for an idle connection.
 	}
 

@@ -23,10 +23,10 @@ const (
 // between the WebSocket connection and the central Hub. Each client runs
 // in its own goroutines for reading and writing messages.
 type Client struct {
-	hub         *Hub            // Reference to the central Hub.
-	conn        *websocket.Conn // The underlying WebSocket connection.
-	send        chan *Message   // Buffered channel for outbound messages to this client.
-	username    string          // Username of the connected user.
+	hub           *Hub            // Reference to the central Hub.
+	conn          *websocket.Conn // The underlying WebSocket connection.
+	send          chan *Message   // Buffered channel for outbound messages to this client.
+	username      string          // Username of the connected user.
 	currentRoomID string          // The ID of the room the client is currently active in.
 }
 
@@ -35,11 +35,11 @@ type Client struct {
 // and the initial roomID the client intends to join.
 func NewClient(hub *Hub, conn *websocket.Conn, username string, initialRoomID string) *Client {
 	return &Client{
-		hub:         hub,
-		conn:        conn,
-		send:        make(chan *Message, 256), // Buffered channel for outbound messages.
-		username:    username,
-		currentRoomID: initialRoomID,       // Set upon connection, Hub handles actual join.
+		hub:           hub,
+		conn:          conn,
+		send:          make(chan *Message, 256), // Buffered channel for outbound messages.
+		username:      username,
+		currentRoomID: initialRoomID, // Set upon connection, Hub handles actual join.
 	}
 }
 
@@ -48,7 +48,7 @@ func NewClient(hub *Hub, conn *websocket.Conn, username string, initialRoomID st
 // there is at most one reader on a connection by executing all reads from this goroutine.
 // Messages read are unmarshaled into the `Message` struct and forwarded to the Hub's
 // `routeMessage` channel for processing.
-func (c *Client) readPump() {
+func (c *Client) ReadPump() {
 	defer func() {
 		// When readPump exits (due to error or connection close), unregister the client
 		// and close the WebSocket connection.
@@ -100,7 +100,7 @@ func (c *Client) readPump() {
 		}
 
 		// Populate message with server-authoritative information.
-		msg.Username = c.username // Sender's username from the authenticated client session.
+		msg.Username = c.username        // Sender's username from the authenticated client session.
 		msg.Timestamp = time.Now().UTC() // Server-side timestamp for received message before routing.
 
 		// If the message type implies it's for the client's current room and RoomID is missing,
@@ -130,7 +130,7 @@ func (c *Client) readPump() {
 // writePump pumps messages from the Hub (via the client's send channel) to the WebSocket connection.
 // This method runs in a dedicated goroutine for each client. It ensures that
 // there is at most one writer on a connection by executing all writes from this goroutine.
-func (c *Client) writePump() {
+func (c *Client) WritePump() {
 	// Start a ticker to send ping messages periodically.
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
@@ -164,7 +164,6 @@ func (c *Client) writePump() {
 				return
 			}
 			log.Printf("CLIENT: Sent message type '%s' to user '%s' in room '%s'", message.Type, c.username, message.RoomID)
-
 
 		case <-ticker.C:
 			// Send a ping message to the peer.

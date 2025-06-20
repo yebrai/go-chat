@@ -1,14 +1,13 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	// "strings" // Not currently used, but could be for more advanced query param validation.
 
-	"chat-app/internal/cache"
-	"chat-app/internal/websocket" // Importing local websocket package
+	"github.com/yebrai/go-chat/internal/cache"
+	"github.com/yebrai/go-chat/internal/websocket" // Importing local websocket package
 
 	gwebsocket "github.com/gorilla/websocket" // Aliased to avoid conflict with local 'websocket'.
 )
