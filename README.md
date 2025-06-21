@@ -1,8 +1,7 @@
-# 🚀 GoChat - Real-time Chat Application
+# GoChat - Real-time Chat Application
 
 > **Aplicación de chat en tiempo real construida con Go, WebSockets y Redis**
 
-Una solución completa de chat que demuestra arquitectura backend escalable, comunicación en tiempo real y gestión eficiente de estado distribuido.
 
 ## ✨ Características Principales
 
@@ -23,6 +22,9 @@ Una solución completa de chat que demuestra arquitectura backend escalable, com
 | **Cache/Store** | Redis | Persistencia y estado distribuido |
 | **Frontend** | HTML5/CSS3/JavaScript | Interfaz de usuario reactiva |
 | **Containerización** | Docker Compose | Orquestación de servicios |
+
+## 📸 Capturas de Pantalla
+![img.png](img.png)
 
 ## 🏗️ Arquitectura del Sistema
 
